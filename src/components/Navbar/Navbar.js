@@ -11,7 +11,7 @@ const Navbar = () => {
   };
 
   return (
-    <header className="bg-[#fef08a] shadow-md"> {/* Updated background color */}
+    <header className="bg-[#fff8b0] shadow-md"> {/* Updated background color */}
       {/* Top Section */}
       <div className="flex items-center justify-between px-4 py-1.5"> {/* Reduced padding */}
         {/* Logo and Text */}
@@ -47,7 +47,7 @@ const Navbar = () => {
       </div>
 
       {/* Bottom Navigation */}
-      <div className="hidden md:flex justify-center bg-[#fef08a] py-1"> {/* Reduced padding */}
+      <div className="hidden md:flex justify-center bg-[#fff8b0] py-1"> {/* Reduced padding */}
         <nav className="flex space-x-6 text-gray-700 font-medium text-lg">
           <Link to="/" className="hover:underline">
             Home
