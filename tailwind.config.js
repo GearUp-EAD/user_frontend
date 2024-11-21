@@ -10,4 +10,6 @@ module.exports = withMT({
     extend: {},
   },
   plugins: [],
-});
+}
+
+)
