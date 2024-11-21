@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { GiCrossMark } from "react-icons/gi";
-import emailjs from "emailjs-com"; // Ensure emailjs is installed
+import emailjs from "emailjs-com"; 
 import contactImage from "../assets/img/contactImage.jpeg";
 
 const Contact = ({ isVisible, setIsVisible }) => {
@@ -47,18 +47,17 @@ const Contact = ({ isVisible, setIsVisible }) => {
     e.preventDefault();
     if (!validateInputs()) return;
 
-    // Use emailjs to send email
     emailjs
       .send(
-        "service_bhprfrt", // Replace with your EmailJS service ID
-        "template_23qntpg", // Replace with your EmailJS template ID
+        "service_bhprfrt", 
+        "template_23qntpg", 
         inputs,
-        "BOC-44GXnTcSLL6nR" // Replace with your EmailJS public key
+        "BOC-44GXnTcSLL6nR" 
       )
       .then(
         () => {
           alert("Message sent successfully!");
-          setInputs({ name: "", email: "", message: "" }); // Reset inputs
+          setInputs({ name: "", email: "", message: "" }); 
         },
         (error) => {
           console.error("Failed to send message:", error);
