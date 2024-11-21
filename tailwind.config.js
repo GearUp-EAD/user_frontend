@@ -4,9 +4,14 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'brown-900': '#5a3a1c', // Customize this color based on the footer's background.
+      },
+    },
   },
   plugins: [],
 };
+
 
 
