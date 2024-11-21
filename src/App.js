@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -6,6 +6,8 @@ import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
 
 const App = () => {
+  const [isVisible, setIsVisible] = useState(false); // State for visibility toggle
+
   return (
     <Router>
       {/* Overall Layout */}
@@ -16,7 +18,13 @@ const App = () => {
         {/* Main Content */}
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<Home />} />
+            {/* Pass props to Home */}
+            <Route
+              path="/"
+              element={
+                <Home isVisible={isVisible} setIsVisible={setIsVisible} />
+              }
+            />
             <Route path="/contact-us" element={<ContactUs />} />
           </Routes>
         </main>
