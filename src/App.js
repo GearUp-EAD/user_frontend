@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
+
+import Navbar from "./components/Navbar/Navbar";
+
 import CartPage from "./pages/Cart";
 import ProductItem from "./pages/ProductItem";
 import Login from "./pages/Login";
@@ -34,6 +36,7 @@ const App = () => {
               }
             />
             <Route path="/contact-us" element={<ContactUs />} />
+
             <Route path="/cart" element={<CartPage />} />
             <Route path="/product-item" element={<ProductItem />} />
             <Route path="/login" element={<Login />} />

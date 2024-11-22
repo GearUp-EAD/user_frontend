@@ -15,7 +15,7 @@ import Header from "../components/Header";
 import ItemCard from "../components/ItemCard";
 import CoverCard from "../components/CoverCard";
 
-const HomePage = () => {
+const Home = () => {
   const navigate = useNavigate();
 
   const image = "https://via.placeholder.com/150";
@@ -164,4 +164,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Home;
