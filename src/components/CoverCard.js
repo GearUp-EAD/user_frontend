@@ -4,7 +4,7 @@ const CoverCard = ({ imageUrl, name }) => {
   return (
     <div
       className="relative group overflow-hidden rounded-lg shadow-lg"
-      style={{ width: "217px", height: "327px" }} 
+      style={{ width: "217px", height: "250px" }}
     >
       <img
         src={imageUrl}
