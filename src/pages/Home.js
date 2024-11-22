@@ -9,6 +9,12 @@ import image4 from "../assets/images/image4.jpeg";
 import image5 from "../assets/images/image5.jpeg";
 import image6 from "../assets/images/image6.jpeg";
 
+
+const Home = () => {
+  return <div>
+    hfjffj
+    </div>;
+
 const HomePage = () => {
   const settings = {
     dots: true,
@@ -100,6 +106,7 @@ const HomePage = () => {
       </div>{" "}
     </div>
   );
+
 };
 
 export default HomePage;
