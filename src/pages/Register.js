@@ -1,37 +1,29 @@
-import React, { useState } from 'react'
-import login from '../assets/login.jpg'
-import { MdOutlineAlternateEmail, MdOutlineRemoveRedEye } from 'react-icons/md'
-import { Link } from 'react-router-dom'
-import GoogleLogin from '../components/social/GoogleLogin'
-import logo from '../assets/Logo.png'
-
+import React, { useState } from "react";
+import login from "../assets/images/login.jpg";
+import { MdOutlineAlternateEmail, MdOutlineRemoveRedEye } from "react-icons/md";
+import { Link } from "react-router-dom";
+import GoogleLogin from "../components/social/GoogleLogin";
+import logo from "../assets/images/ead_Logo.png";
 
 const Register = () => {
-  const [showPassword, setShowPassword] = useState(false)
- 
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
     <div>
-        <div className=' flex flex-row '>
-        <div className=' flex flex-col  object-contain'>
-            <img src={login} className=' rounded-lg'/>
+      <div className=" flex flex-row ">
+        <div className=" flex flex-col  object-contain">
+          <img src={login} className=" rounded-lg" />
         </div>
 
-
-
         <div className=" mx-auto max-w-lg mb-0 mt-20 rounded-lg p-4 shadow-lg sm:p-6 lg:p-8 w-[50vh] h-[70vh] my-10">
-        
-
-    
-          <form  className=" space-y-4">
-
-            <div className=' flex flex-col gap-3 mb-10 p-5 items-center  justify-center'>
-
-                
-            <h1 className=' text-center font-poppins font-bold text-4xl justify-center'>Sign Up</h1>
-            <p className=" text-center font-poppins text-sm ">
-            Shop the best of Sports Items, Grab the deals, offers and more.
-            </p>
-
+          <form className=" space-y-4">
+            <div className=" flex flex-col gap-3 mb-10 p-5 items-center  justify-center">
+              <h1 className=" text-center font-poppins font-bold text-4xl justify-center">
+                Sign Up
+              </h1>
+              <p className=" text-center font-poppins text-sm ">
+                Shop the best of Sports Items, Grab the deals, offers and more.
+              </p>
             </div>
             <div>
               <label htmlFor="email" className=" sr-only">
@@ -56,15 +48,14 @@ const Register = () => {
               </label>
               <div className=" relative">
                 <input
-                 type={showPassword ? "text" : "password"}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Enter password"
                   className=" w-full border outline-none rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm "
                 />
                 <span
-                 onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword(!showPassword)}
                   className=" absolute inset-y-0 end-0 grid place-content-center px-4 cursor-pointer"
-                  
                 >
                   <MdOutlineRemoveRedEye className=" h-4 w-4 text-gray-400" />
                 </span>
@@ -72,19 +63,18 @@ const Register = () => {
             </div>
             <div>
               <label htmlFor="password" className=" sr-only">
-               Confirm Password
+                Confirm Password
               </label>
               <div className=" relative">
                 <input
-                 type={showPassword ? "text" : "password"}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Confirm password"
                   className=" w-full border outline-none rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm "
                 />
                 <span
-                 onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowPassword(!showPassword)}
                   className=" absolute inset-y-0 end-0 grid place-content-center px-4 cursor-pointer"
-                  
                 >
                   <MdOutlineRemoveRedEye className=" h-4 w-4 text-gray-400" />
                 </span>
@@ -96,23 +86,18 @@ const Register = () => {
             >
               Sign Up
             </button>
-
           </form>
-            <GoogleLogin/>
-            <p className=" text-center text-sm text-gray-500">
-              No Account?{" "}
-              <Link className="underline text-secondary" to="/register">
-                Sign Up
-              </Link>
-            </p>
+          <GoogleLogin />
+          <p className=" text-center text-sm text-gray-500">
+            No Account?{" "}
+            <Link className="underline text-secondary" to="/register">
+              Sign Up
+            </Link>
+          </p>
         </div>
-
-     
-
-        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-
-export default Register
+export default Register;

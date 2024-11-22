@@ -10,6 +10,11 @@ import CartPage from "./pages/Cart";
 import ProductItem from "./pages/ProductItem";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Equipments from "./pages/Equipments";
+import Accessories from "./pages/Accessories";
+import Apparels from "./pages/Apparels";
+import FootWear from "./pages/Footwear";
+import NutritionHealth from "./pages/NutritionHealth";
 
 const App = () => {
   const [isVisible, setIsVisible] = useState(false); // State for visibility toggle
@@ -19,9 +24,6 @@ const App = () => {
       {/* Overall Layout */}
       <div className="flex flex-col min-h-screen">
         {/* Header */}
-
-        <Navbar/>
-
 
         {/* Main Content */}
         <main className="flex-grow">
@@ -35,18 +37,19 @@ const App = () => {
             />
             <Route path="/contact-us" element={<ContactUs />} />
 
-            
-
             <Route path="/cart" element={<CartPage />} />
             <Route path="/product-item" element={<ProductItem />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-
+            <Route path="/equipments" element={<Equipments />} />
+            <Route path="/accessories" element={<Accessories />} />
+            <Route path="/apparels" element={<Apparels />} />
+            <Route path="/footWear" element={<FootWear />} />
+            <Route path="/nutritionHealth" element={<NutritionHealth />} />
           </Routes>
         </main>
 
         {/* Footer */}
-        
       </div>
     </Router>
   );

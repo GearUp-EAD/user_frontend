@@ -3,7 +3,6 @@ import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-
   return (
     <footer className="bg-brown-900 text-white py-6">
       {/* Main Section */}
@@ -63,10 +62,11 @@ const Footer = () => {
         <div>
           <h3 className="font-bold text-base mb-2">Mail Us</h3>
           <p>gearup@gmail.com</p>
-          
         </div>
         <div>
-          <h3 className="font-bold text-base mb-2"><Link to='/contact-us'>Contact Us</Link></h3>
+          <h3 className="font-bold text-base mb-2">
+            <Link to="/contact-us">Contact Us</Link>
+          </h3>
           <p>B-11 D.S.I.D.C Complex, F.I.E Patparganj Industrial Area</p>
         </div>
       </div>
@@ -77,10 +77,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-
-  return <div>Footer</div>;
-
 };
 
 export default Footer;
-

@@ -1,4 +1,6 @@
 import React from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -8,14 +10,15 @@ import image3 from "../assets/images/image3.jpeg";
 import image4 from "../assets/images/image4.jpeg";
 import image5 from "../assets/images/image5.jpeg";
 import image6 from "../assets/images/image6.jpeg";
-
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import ItemCard from "../components/ItemCard";
+import CoverCard from "../components/CoverCard";
 
 const Home = () => {
-  return <div>
-    hfjffj
-    </div>;
+  const navigate = useNavigate();
 
-const HomePage = () => {
+  const image = "https://via.placeholder.com/150";
   const settings = {
     dots: true,
     infinite: true,
@@ -36,8 +39,36 @@ const HomePage = () => {
     ],
   };
 
+  const items = [
+    {
+      id: 1,
+      imageUrl: "https://via.placeholder.com/150",
+      title: "Item 1",
+      description: "Description of Item 1",
+      price: 100,
+    },
+    {
+      id: 2,
+      imageUrl: "https://via.placeholder.com/150",
+      title: "Item 2",
+      description: "Description of Item 2",
+      price: 120,
+    },
+    {
+      id: 3,
+      imageUrl: "https://via.placeholder.com/150",
+      title: "Item 3",
+      description: "Description of Item 3",
+      price: 150,
+    },
+    // Add more items as needed
+  ];
+
   return (
     <div className="bg-gray-50 min-h-screen">
+      <div className="mb-4">
+        <Header />
+      </div>
       {/* Image Carousel */}
       <div className="max-w-7xl mx-auto px-4">
         <Slider {...settings}>
@@ -45,42 +76,42 @@ const HomePage = () => {
             <img
               src={image1}
               alt="Image 1"
-              className="h-100 w-full object-cover rounded-lg"
+              className="h-100 w-full object-cover"
             />
           </div>
           <div>
             <img
               src={image2}
               alt="Image 2"
-              className="h-100 w-full object-cover rounded-lg"
+              className="h-100 w-full object-cover "
             />
           </div>
           <div>
             <img
               src={image4}
               alt="Image 3"
-              className="h-100 w-full object-cover rounded-lg"
+              className="h-100 w-full object-cover "
             />
           </div>
           <div>
             <img
               src={image3}
               alt="Image 4"
-              className="h-100 w-full object-cover rounded-lg"
+              className="h-100 w-full object-cover "
             />
           </div>
           <div>
             <img
               src={image5}
               alt="Image 5"
-              className="h-100 w-full object-cover rounded-lg"
+              className="h-100 w-full object-cover "
             />
           </div>
           <div>
             <img
               src={image6}
               alt="Image 6"
-              className="h-100 w-full object-cover rounded-lg"
+              className="h-100 w-full object-cover "
             />
           </div>
         </Slider>
@@ -104,9 +135,33 @@ const HomePage = () => {
           Shop Now
         </button>
       </div>{" "}
+      <div className="text-4xl font-bold text-gray-800 mb-4 mx-10">
+        New Arrival
+      </div>
+      <div className="flex overflow-x-auto space-x-4 py-4 mx-10">
+        {items.map((item) => (
+          <ItemCard
+            key={item.id} // Use unique id as key
+            imageUrl={item.imageUrl}
+            title={item.title}
+            description={item.description}
+            price={item.price}
+          />
+        ))}
+      </div>
+      <div className="flex justify-center items-center h-full mt-14 mb-14">
+        <button
+          className="px-8 py-4 bg-brown-500 text-white font-semibold text-lg rounded hover:bg-brown-600 mb-4"
+          onClick={() => navigate("../contact-us")}
+        >
+          Contact Us
+        </button>
+      </div>
+      <div>
+        <Footer />
+      </div>
     </div>
   );
-
 };
 
-export default HomePage;
+export default Home;

@@ -1,16 +1,3 @@
-
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./src/**/*.{js,jsx,ts,tsx}",
-  ],
-  theme: {
-    extend: {
-      colors: {
-        'brown-900': '#5a3a1c', // Customize this color based on the footer's background.
-      },
-    },
-
 const withMT = require("@material-tailwind/react/utils/withMT");
 
 module.exports = withMT({
@@ -22,14 +9,9 @@ module.exports = withMT({
   theme: {
     extend: {
       fontFamily: {
-        poppins: ['Poppins', 'sans-serif'], // Add the Poppins font
+        poppins: ["Poppins", "sans-serif"], // Add the Poppins font
       },
-    }
-
+    },
   },
   plugins: [],
-};
-
-
-
-)
+});
