@@ -3,6 +3,7 @@ import { FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
+
   return (
     <footer className="bg-brown-900 text-white py-6">
       {/* Main Section */}
@@ -76,6 +77,9 @@ const Footer = () => {
       </div>
     </footer>
   );
+
+  return <div>Footer</div>;
+
 };
 
 export default Footer;
