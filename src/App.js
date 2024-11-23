@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
 import CartPage from "./pages/Cart";
 import ProductItem from "./pages/ProductItem";
+import Profile from "./pages/Profile";
 
 const App = () => {
   const [isVisible, setIsVisible] = useState(false); // State for visibility toggle
@@ -30,6 +31,7 @@ const App = () => {
             <Route path="/contact-us" element={<ContactUs />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/product-item" element={<ProductItem />} />
+            <Route path="/profile" element={<Profile />} />
           </Routes>
         </main>
 
