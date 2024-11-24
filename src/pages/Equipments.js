@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ItemCard from "../components/ItemCard";
 import CoverCard from "../components/CoverCard";
 import Footer from "../components/Footer";
@@ -11,93 +11,42 @@ import image5 from "../assets/images/Equipments/Protective Gear.jpg";
 
 const Equipment = () => {
   const categories = [
-    {
-      id: "cat1",
-      name: "Balls",
-      imageUrl: image1,
-    },
-    {
-      id: "cat2",
-      name: "Bags and Bottles",
-      imageUrl: image2,
-    },
-    {
-      id: "cat3",
-      name: "Fitness and Gym",
-      imageUrl: image3,
-    },
-    {
-      id: "cat4",
-      name: "Rackets and Bats",
-      imageUrl: image4,
-    },
-    {
-      id: "cat5",
-      name: "Protective Gear",
-      imageUrl: image5,
-    },
+    { id: "4bebea4d-0c16-45b6-8274-8054fd2f5291", name: "Balls", imageUrl: image1 },
+    { id: "044b3f97-23f4-497d-b325-b7dbc20fa08c", name: "Bags and Bottles", imageUrl: image2 },
+    { id: "7b566af0-753b-4334-82e4-524d4933e4a3", name: "Fitness and Gym", imageUrl: image3 },
+    { id: "be20330b-bfdd-463c-ac1d-0e849b79ee43", name: "Rackets and Bats", imageUrl: image4 },
+    { id: "63bc7d14-e09f-4996-9210-6c5e611a98df", name: "Protective Gear", imageUrl: image5 },
   ];
 
-  const items = [
-    {
-      id: 1,
-      title: "Item 1",
-      description: "Description 1",
-      price: 100,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat1",
-    },
-    {
-      id: 2,
-      title: "Item 2",
-      description: "Description 2",
-      price: 200,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat2",
-    },
-    {
-      id: 3,
-      title: "Item 3",
-      description: "Description 3",
-      price: 300,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat3",
-    },
-    {
-      id: 4,
-      title: "Item 4",
-      description: "Description 4",
-      price: 400,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat4",
-    },
-    {
-      id: 5,
-      title: "Item 5",
-      description: "Description 5",
-      price: 500,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat5",
-    },
-    {
-      id: 6,
-      title: "Item 6",
-      description: "Description 6",
-      price: 600,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat1",
-    },
-    // Add more items as needed
-  ];
-
+  const [items, setItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(null);
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/api/products");
+        if (!response.ok) {
+          throw new Error("Failed to fetch items");
+        }
+        const data = await response.json();
+        setItems(data);
+      } catch (error) {
+        console.error("Error fetching items:", error);
+      }
+      console.log(items)
+    };
+
+    fetchItems();
+  }, []);
 
   const handleCategoryClick = (categoryId) => {
     setSelectedCategory(categoryId);
+    setActiveCategory(categoryId); // Set active category for hover effect
   };
 
   const filteredItems = selectedCategory
-    ? items.filter((item) => item.categoryId === selectedCategory)
+    ? items.filter((item) => item.category === selectedCategory)
     : items;
 
   return (
@@ -109,36 +58,34 @@ const Equipment = () => {
         {/* Category Display */}
         <div className="flex justify-center gap-4 mb-6">
           {categories.map((category) => (
-            <div
+            <CoverCard
               key={category.id}
-              onClick={() => handleCategoryClick(category.id)}
-              className="cursor-pointer"
-            >
-              <CoverCard imageUrl={category.imageUrl} name={category.name} />
-            </div>
+              imageUrl={category.imageUrl}
+              name={category.name}
+              isActive={activeCategory === category.id} // Check if active
+              onClick={() => handleCategoryClick(category.id)} // Handle click
+            />
           ))}
         </div>
 
-        <div className="text-2xl font-bold text-gray-800 mt-6 mx-10">
+        <div className="text-2xl font-bold text-gray-800 mt-6 text-center">
           Available Items
         </div>
 
         {/* Items Display */}
-        <div className="flex overflow-x-auto space-x-4 py-4 mx-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6 px-4">
           {filteredItems.map((item) => (
             <ItemCard
               key={item.id}
-              imageUrl={item.imageUrl}
-              title={item.title}
+              imageUrl="https://via.placeholder.com/150"
+              title={item.name}
               description={item.description}
               price={item.price}
             />
           ))}
         </div>
       </div>
-      <div>
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };

@@ -6,11 +6,11 @@ import Logo from "../assets/images/ead_Logo.png";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const navigate = useNavigate();
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-
-  const navigate = useNavigate();
 
   return (
     <header className="bg-[#F8F4E1] shadow-md">
@@ -30,6 +30,13 @@ const Header = () => {
           {/* Slightly smaller font size */}
         </div>
         {/* Right Section */}
+        <div>
+          <button 
+            className="mt-6 px-6 py-2 bg-brown-500 text-white font-semibold rounded hover:bg-brown-600"
+            onClick={() => navigate("../pages/login")}>
+            Login
+          </button>
+        </div>
         <div className="flex items-center space-x-4">
           {/* Search Bar */}
           <div className="relative">
