@@ -33,7 +33,7 @@ const Header = () => {
         <div>
           <button 
             className="mt-6 px-6 py-2 bg-brown-500 text-white font-semibold rounded hover:bg-brown-600"
-            onClick={() => navigate("../pages/login")}>
+            onClick={() => navigate("../login")}>
             Login
           </button>
         </div>
