@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
 import CartPage from "./pages/Cart";
 import ProductItem from "./pages/ProductItem";
+import EditProfile from "./pages/EditProfile";
 import Profile from "./pages/Profile";
 
 const App = () => {
@@ -32,6 +33,7 @@ const App = () => {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/product-item" element={<ProductItem />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/profile-edit" element={<EditProfile />} />
           </Routes>
         </main>
 

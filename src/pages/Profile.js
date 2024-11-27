@@ -1,203 +1,171 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
-  const [profileImage, setProfileImage] = useState("");
+  const [activeTab, setActiveTab] = useState("orders");
+  const [orders, setOrders] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [address, setAddress] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const defaultProfileIcon =
-    "https://via.placeholder.com/150?text=Profile+Icon"; 
+  const navigateEdit = () => {
+    navigate("/profile-edit");
+  };
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/api/orders");
+      setOrders(response.data);
+
+      const details = await axios.get("/api/user/profile");
+      setName(details.data.name);
+    } catch (error) {
+      console.error(
+        "Error fetching data:",
+        error.response ? error.response.data : error.message
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWishlist = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get("/api/wishlist");
+      setWishlist(response.data);
+    } catch (error) {
+      console.error(
+        "Error fetching wishlist:",
+        error.response ? error.response.data : error.message
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("/api/user/profile", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        const data = await response.json();
-
-        setProfileImage(data.profileImage || "defaultProfileIcon");
-        setName(data.name || "");
-        setEmail(data.email || "");
-        setPassword(data.password ? "*".repeat(data.password.length) : "");
-        setAddress(data.address || "");
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-        setLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, []);
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setProfileImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("/api/user/profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          profileImage,
-          name,
-          email,
-          password: password.includes("*") ? undefined : password,
-          newPassword,
-          address,
-        }),
-      });
-
-      if (response.ok) {
-        alert("Profile updated successfully!");
-      } else {
-        alert("Failed to update profile.");
-      }
-    } catch (error) {
-      console.error("Failed to update profile:", error);
-      alert("An error occurred while updating your profile.");
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-        <div>Loading...</div>
-      </div>
-    );
-  }
+    if (activeTab === "orders") fetchOrders();
+    if (activeTab === "wishlist") fetchWishlist();
+  }, [activeTab]);
 
   return (
-    <div className="bg-gray-100 min-h-screen py-10">
-      <div className="container mx-auto max-w-4xl bg-white shadow-md rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-6">Profile</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+      <div className="w-full max-w-5xl bg-white shadow-md rounded-lg p-6">
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <img
-              src={profileImage || defaultProfileIcon}
+              src="https://via.placeholder.com/150?text=Profile+Icon"
               alt="Profile"
-              className="w-32 h-32 rounded-full object-cover border-2 border-gray-300"
+              className="w-24 h-24 rounded-full border-2 border-[#b08254]"
             />
             <div>
-              <label
-                htmlFor="profileImage"
-                className="px-4 py-2 bg-[#74512D] text-white rounded-lg shadow cursor-pointer hover:bg-blue-600"
-              >
-                Change Image
-              </label>
-              <input
-                id="profileImage"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageChange}
-              />
+              <h2 className="text-2xl font-semibold text-gray-800">{name}</h2>
             </div>
           </div>
+          <button
+            className="px-4 py-1 bg-[#74512D] text-white rounded-md"
+            onClick={navigateEdit}
+          >
+            Edit Profile
+          </button>
+        </div>
 
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Current Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="newPassword"
-              className="block text-sm font-medium text-gray-700"
-            >
-              New Password
-            </label>
-            <input
-              type="password"
-              id="newPassword"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="address"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Shipment Address
-            </label>
-            <textarea
-              id="address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          <div>
+        <div className="mt-6 border-b border-gray-200">
+          <div className="flex space-x-6">
             <button
-              type="submit"
-              className="px-4 py-2 bg-[#74512D] text-white rounded-lg shadow hover:bg-blue-600"
+              onClick={() => setActiveTab("orders")}
+              className={`py-2 px-4 text-sm font-medium ${
+                activeTab === "orders"
+                  ? "text-[#74512D] border-b-2 border-[#74512D]"
+                  : "text-gray-600"
+              }`}
             >
-              Save Changes
+              Order History
+            </button>
+            <button
+              onClick={() => setActiveTab("wishlist")}
+              className={`py-2 px-4 text-sm font-medium ${
+                activeTab === "wishlist"
+                  ? "text-[#74512D] border-b-2 border-[#74512D]"
+                  : "text-gray-600"
+              }`}
+            >
+              Wishlist
             </button>
           </div>
-        </form>
+        </div>
+
+        <div className="mt-6">
+          {loading && <p className="text-gray-500">Loading...</p>}
+
+          {activeTab === "orders" && !loading && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800">
+                Order History
+              </h3>
+              {orders.length > 0 ? (
+                <ul className="mt-4 space-y-4">
+                  {orders.map((order) => (
+                    <li
+                      key={order.id}
+                      className="p-4 bg-gray-50 rounded-lg shadow flex justify-between"
+                    >
+                      <div>
+                        <h4 className="font-semibold">Order #{order.id}</h4>
+                        <p className="text-sm text-gray-600">
+                          Placed on: {new Date(order.date).toLocaleDateString()}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Status: {order.status}
+                        </p>
+                      </div>
+                      <button className="px-4 py-2 text-black text-12px">
+                        {order.status === "Delivered"
+                          ? "View Details→"
+                          : "Track Order"}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-600 mt-4">No orders found.</p>
+              )}
+            </div>
+          )}
+
+          {activeTab === "wishlist" && !loading && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800">Wishlist</h3>
+              {wishlist.length > 0 ? (
+                <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {wishlist.map((item) => (
+                    <li
+                      key={item.id}
+                      className="bg-gray-50 rounded-lg shadow p-4"
+                    >
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-40 object-cover rounded-lg"
+                      />
+                      <h4 className="mt-2 font-semibold">{item.name}</h4>
+                      <p className="text-sm text-gray-600">${item.price}</p>
+                      <button className="mt-2 px-4 py-1 bg-[#74512D] text-white rounded-md">
+                        Add to Cart
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-600 mt-4">Your wishlist is empty.</p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
