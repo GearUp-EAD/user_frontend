@@ -1,43 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CartItem from "../components/CartItem";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 const CartPage = () => {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      image: "https://via.placeholder.com/150",
-      name: "Nike Air Max 1 Essential",
-      description: "Men's Shoes, White/Summit White/Black, Size 6.5",
-      price: 140.0,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      image: "https://via.placeholder.com/150",
-      name: "Nike Sportswear Phoenix Fleece",
-      description: "Sweatshirt, Red Sepia/Sail, Size XS (0-2)",
-      price: 70.0,
-      quantity: 1,
-    },
-    {
-      id: 3,
-      image: "https://via.placeholder.com/150",
-      name: "Nike Sportswear Phoenix Fleece",
-      description: "Sweatshirt, Light Orewood Brown/Sail, Size XXS (00)",
-      price: 70.0,
-      quantity: 1,
-    },
-  ]);
+  const [cartItems, setCartItems] = useState(() => {
+    // Load cart from localStorage
+    const savedCart = localStorage.getItem("cartItems");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
 
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
   const shippingFee = 290.29;
   const savedAmount = 290.29;
-  const total = subtotal + shippingFee - savedAmount;
+
+  useEffect(() => {
+    // Save cart to localStorage whenever it changes
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const handleIncrease = (id) => {
     setCartItems((prevItems) =>
@@ -61,11 +40,34 @@ const CartPage = () => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
+  const handleCheckout = async () => {
+    // Send cart data to the backend on checkout
+    const response = await fetch("https://your-backend-api.com/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ cartItems }),
+    });
+
+    if (response.ok) {
+      alert("Checkout successful!");
+      setCartItems([]); // Clear cart after checkout
+      localStorage.removeItem("cartItems"); // Clear localStorage
+    } else {
+      alert("Checkout failed. Please try again.");
+    }
+  };
+
+  const subtotal = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
+  const total = subtotal + shippingFee - savedAmount;
+
   return (
     <div className="bg-gray-50 min-h-screen">
-      <div className="mb-4">
-        <Header />
-      </div>
+      <Header />
       <div className="flex h-screen">
         {/* Left Section: Cart Items */}
         <div className="w-7/12 p-6 border-r border-gray-300">
@@ -103,15 +105,16 @@ const CartPage = () => {
               <span>Total</span>
               <span>${total.toFixed(2)}</span>
             </div>
-            <button className="w-full bg-brown-500 text-white py-3 rounded-lg mt-4 hover:bg-brown-600">
+            <button
+              onClick={handleCheckout}
+              className="w-full bg-brown-500 text-white py-3 rounded-lg mt-4 hover:bg-brown-600"
+            >
               Checkout({cartItems.length})
             </button>
           </div>
         </div>
       </div>
-      <div>
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };
