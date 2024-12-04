@@ -31,11 +31,7 @@ const Header = () => {
         </div>
         {/* Right Section */}
         <div>
-          <button 
-            className="mt-6 px-6 py-2 bg-brown-500 text-white font-semibold rounded hover:bg-brown-600"
-            onClick={() => navigate("../login")}>
-            Login
-          </button>
+
         </div>
         <div className="flex items-center space-x-4">
           {/* Search Bar */}
@@ -47,14 +43,17 @@ const Header = () => {
             />
             <FiSearch className="absolute top-2.5 left-3 text-gray-500" />
           </div>
-          {/* Icons */}
           <FiBell className="text-gray-700 w-5 h-5 hover:text-gray-900" />{" "}
-          {/* Smaller icon size */}
+        
           <FiShoppingCart
             className="text-gray-700 w-5 h-5 hover:text-gray-900"
             onClick={() => navigate("../cart")}
           />{" "}
-          {/* Smaller icon size */}
+                   <button 
+            className=" px-6 py-2 bg-brown-500 text-white font-semibold rounded hover:bg-brown-600"
+            onClick={() => navigate("../login")}>
+            Login
+          </button>
         </div>
         {/* Mobile Menu Toggle */}
         <button onClick={toggleMenu} className="md:hidden text-gray-700 ml-4">
