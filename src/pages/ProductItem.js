@@ -119,10 +119,17 @@ const ProductItem = () => {
 
           <button
             onClick={() => {
-              setIsAddedToCart(true);
-              setTimeout(() => {
-                navigate("../cart");
-              }, 1000); // Navigate after 1 second to show the message
+              if (!selectedSize) {
+                alert("Please select a size before adding to the cart.");
+                return;
+              }
+
+              navigate("../cart", {
+                state: {
+                  product,
+                  selectedSize,
+                },
+              });
             }}
             className="mt-4 w-full bg-[#74512D] text-white py-2 px-4 rounded-md hover:bg-[#654321] transition"
           >
