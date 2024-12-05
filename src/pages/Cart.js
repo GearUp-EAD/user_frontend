@@ -16,6 +16,14 @@ const CartPage = () => {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const userProfile = {
+    name: "John Doe",
+    address: "1234 Elm Street, Springfield, USA",
+    phone: "+1 234 567 890",
+  };
+
   // Add a new product to the cart only when the component mounts or the product changes
   useEffect(() => {
     if (product) {
@@ -96,15 +104,6 @@ const CartPage = () => {
     setCartItems(updatedCart);
   };
 
-  const handleCheckToggle = (id) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, checked: !item.checked } : item
-      )
-    );
-    setCartItems(updatedCart);
-  };
-
   return (
     <div className="bg-gray-50 min-h-screen">
       <Header />
@@ -156,6 +155,7 @@ const CartPage = () => {
               <span>${total.toFixed(2)}</span>
             </div>
             <button
+              onClick={() => setIsModalVisible(true)}
               className="w-full bg-brown-500 text-white py-3 rounded-lg mt-4 hover:bg-brown-600"
               disabled={checkedItems.length === 0}
             >
@@ -164,6 +164,36 @@ const CartPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal Popup */}
+      {isModalVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <button
+              onClick={() => setIsModalVisible(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+            >
+              ✖
+            </button>
+            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+            <p>
+              <strong>Name:</strong> {userProfile.name}
+            </p>
+            <p>
+              <strong>Address:</strong> {userProfile.address}
+            </p>
+            <p>
+              <strong>Telephone:</strong> {userProfile.phone}
+            </p>
+            <p className="mt-4">
+              <strong>Total:</strong> ${total.toFixed(2)}
+            </p>
+            <button className="w-full bg-green-500 text-white py-2 mt-4 rounded-md hover:bg-green-600">
+              Pay Now
+            </button>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );
