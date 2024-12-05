@@ -52,6 +52,7 @@ const Header = () => {
           {/* Smaller icon size */}
           <FiShoppingCart
             className="text-gray-700 w-5 h-5 hover:text-gray-900"
+           data-testid="cart-icon"
             onClick={() => navigate("../cart")}
           />{" "}
           {/* Smaller icon size */}
