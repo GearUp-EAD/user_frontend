@@ -9,9 +9,19 @@ const CartItem = ({
   onIncrease,
   onDecrease,
   onRemove,
+  checked,
+  onCheckToggle,
 }) => {
   return (
     <div className="flex items-start p-4 border-b border-gray-200">
+      {/* Checkbox */}
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onCheckToggle}
+        className="mr-4 accent-red-500"
+      />
+
       {/* Product Image */}
       <img
         src={image}

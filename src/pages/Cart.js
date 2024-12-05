@@ -12,6 +12,7 @@ const CartPage = () => {
       description: "Men's Shoes, White/Summit White/Black, Size 6.5",
       price: 140.0,
       quantity: 1,
+      checked: false,
     },
     {
       id: 2,
@@ -20,6 +21,7 @@ const CartPage = () => {
       description: "Sweatshirt, Red Sepia/Sail, Size XS (0-2)",
       price: 70.0,
       quantity: 1,
+      checked: false,
     },
     {
       id: 3,
@@ -28,15 +30,18 @@ const CartPage = () => {
       description: "Sweatshirt, Light Orewood Brown/Sail, Size XXS (00)",
       price: 70.0,
       quantity: 1,
+      checked: false,
     },
   ]);
 
-  const subtotal = cartItems.reduce(
+  // Calculate totals for checked items only
+  const checkedItems = cartItems.filter((item) => item.checked);
+  const subtotal = checkedItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
-  const shippingFee = 290.29;
-  const savedAmount = 290.29;
+  const shippingFee = checkedItems.length > 0 ? 290.29 : 0;
+  const savedAmount = checkedItems.length > 0 ? 290.29 : 0;
   const total = subtotal + shippingFee - savedAmount;
 
   const handleIncrease = (id) => {
@@ -61,6 +66,14 @@ const CartPage = () => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
+  const handleCheckToggle = (id) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, checked: !item.checked } : item
+      )
+    );
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="mb-4">
@@ -77,6 +90,7 @@ const CartPage = () => {
               onIncrease={() => handleIncrease(item.id)}
               onDecrease={() => handleDecrease(item.id)}
               onRemove={() => handleRemove(item.id)}
+              onCheckToggle={() => handleCheckToggle(item.id)}
             />
           ))}
         </div>
@@ -104,7 +118,7 @@ const CartPage = () => {
               <span>${total.toFixed(2)}</span>
             </div>
             <button className="w-full bg-brown-500 text-white py-3 rounded-lg mt-4 hover:bg-brown-600">
-              Checkout({cartItems.length})
+              Checkout({checkedItems.length})
             </button>
           </div>
         </div>
