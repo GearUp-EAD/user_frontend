@@ -2,13 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const ItemCard = ({ imageUrl, title, description, price }) => {
-  const navigate = useNavigate();
 
   return (
     <div
       className="bg-white border border-gray-200 rounded-lg shadow-lg"
       style={{ width: "327px", height: "327px" }}
-      onClick={() => navigate("../product-item")}
     >
       <img
         src={imageUrl}

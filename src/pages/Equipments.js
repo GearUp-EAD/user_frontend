@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ItemCard from "../components/ItemCard";
 import CoverCard from "../components/CoverCard";
 import Footer from "../components/Footer";
@@ -10,8 +11,11 @@ import image4 from "../assets/images/Equipments/Rackets and Bats.jpg";
 import image5 from "../assets/images/Equipments/Protective Gear.jpg";
 
 const Equipment = () => {
+
+  const navigate = useNavigate();
+
   const categories = [
-    { id: "4bebea4d-0c16-45b6-8274-8054fd2f5291", name: "Balls", imageUrl: image1 },
+    { id: "a6bec2cf-511a-4fb0-a588-db251d6e68f3", name: "Balls", imageUrl: image1 },
     { id: "044b3f97-23f4-497d-b325-b7dbc20fa08c", name: "Bags and Bottles", imageUrl: image2 },
     { id: "7b566af0-753b-4334-82e4-524d4933e4a3", name: "Fitness and Gym", imageUrl: image3 },
     { id: "be20330b-bfdd-463c-ac1d-0e849b79ee43", name: "Rackets and Bats", imageUrl: image4 },
@@ -34,20 +38,20 @@ const Equipment = () => {
       } catch (error) {
         console.error("Error fetching items:", error);
       }
-      console.log(items)
     };
 
     fetchItems();
   }, []);
 
   const handleCategoryClick = (categoryId) => {
-    setSelectedCategory(categoryId);
-    setActiveCategory(categoryId); // Set active category for hover effect
+    const selectedCategoryName = categories.find((category) => category.id === categoryId)?.name;
+    setSelectedCategory(selectedCategoryName);
+    setActiveCategory(categoryId); // Keep track of active category for hover effect
   };
-
-  const filteredItems = selectedCategory
-    ? items.filter((item) => item.category === selectedCategory)
-    : items;
+  
+  const filteredItems = selectedCategory 
+      ? items.filter((item) => item.categoryName === selectedCategory)
+      : items;
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -75,13 +79,17 @@ const Equipment = () => {
         {/* Items Display */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6 px-4">
           {filteredItems.map((item) => (
-            <ItemCard
-              key={item.id}
-              imageUrl="https://via.placeholder.com/150"
-              title={item.name}
-              description={item.description}
-              price={item.price}
-            />
+            <div 
+              key={item.id} 
+              onClick={() => navigate(`/product-item/${item.productId}`)} // Navigate with productId
+            >
+              <ItemCard
+                imageUrl={item.imageUrl}
+                title={item.name}
+                description={item.description}
+                price={item.basePrice}
+              />
+            </div>
           ))}
         </div>
       </div>
