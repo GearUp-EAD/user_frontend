@@ -15,8 +15,8 @@ import Accessories from "./pages/Accessories";
 import Apparels from "./pages/Apparels";
 import FootWear from "./pages/Footwear";
 import NutritionHealth from "./pages/NutritionHealth";
-import EditProfile from "./pages/EditProfile";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 
 const App = () => {
   const [isVisible, setIsVisible] = useState(false); // State for visibility toggle
@@ -40,7 +40,16 @@ const App = () => {
             <Route path="/contact-us" element={<ContactUs />} />
 
             <Route path="/cart" element={<CartPage />} />
-            <Route path="/product-item" element={<ProductItem />} />
+            <Route path="/product-item/:productId" element={<ProductItem />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/equipments" element={<Equipments />} />
+            <Route path="/accessories" element={<Accessories />} />
+            <Route path="/apparels" element={<Apparels />} />
+            <Route path="/footWear" element={<FootWear />} />
+            <Route path="/nutritionHealth" element={<NutritionHealth />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile-edit" element={<EditProfile />} />
           </Routes>
         </main>
 

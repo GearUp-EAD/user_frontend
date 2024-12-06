@@ -6,51 +6,72 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("orders");
   const [orders, setOrders] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-  const [name, setName] = useState("");
+  const [name, setName] = useState("John Doe");
+  const [email, setEmail] = useState("john.doe@example.com");
+  const [address, setAddress] = useState("123 Main Street, Springfield");
+  const [phone, setPhone] = useState("+1 234 567 890");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const navigateEdit = () => {
-    navigate("/profile-edit");
+  const dummyOrders = [
+    {
+      id: "001",
+      date: "2024-11-20T14:35:00Z",
+      status: "Delivered",
+      items: [
+        { name: "Wireless Mouse", quantity: 1, price: 25.99 },
+        { name: "Keyboard", quantity: 1, price: 49.99 },
+      ],
+      totalAmount: 75.98,
+    },
+    {
+      id: "002",
+      date: "2024-11-22T09:10:00Z",
+      status: "Shipped",
+      items: [
+        { name: "Bluetooth Headphones", quantity: 1, price: 89.99 },
+      ],
+      totalAmount: 89.99,
+    },
+    {
+      id: "003",
+      date: "2024-12-01T18:30:00Z",
+      status: "Processing",
+      items: [
+        { name: "Laptop Stand", quantity: 1, price: 35.99 },
+        { name: "USB Cable", quantity: 2, price: 5.99 },
+      ],
+      totalAmount: 47.97,
+    },
+    {
+      id: "004",
+      date: "2024-12-02T10:45:00Z",
+      status: "Delivered",
+      items: [
+        { name: "Smartphone Case", quantity: 2, price: 19.99 },
+      ],
+      totalAmount: 39.98,
+    },
+  ];
+
+  const fetchOrders = () => {
+    // Simulating API call with dummy data
+    setOrders(dummyOrders);
   };
 
-  const fetchOrders = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/api/orders");
-      setOrders(response.data);
-
-      const details = await axios.get("/api/user/profile");
-      setName(details.data.name);
-    } catch (error) {
-      console.error(
-        "Error fetching data:",
-        error.response ? error.response.data : error.message
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchWishlist = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get("/api/wishlist");
-      setWishlist(response.data);
-    } catch (error) {
-      console.error(
-        "Error fetching wishlist:",
-        error.response ? error.response.data : error.message
-      );
-    } finally {
-      setLoading(false);
-    }
+  const fetchWishlist = () => {
+    // Simulating API call with dummy data (empty for now)
+    setWishlist([]);
   };
 
   useEffect(() => {
     if (activeTab === "orders") fetchOrders();
     if (activeTab === "wishlist") fetchWishlist();
   }, [activeTab]);
+
+  const navigateEdit = () => {
+    navigate("/profile-edit");
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
@@ -64,6 +85,9 @@ const Profile = () => {
             />
             <div>
               <h2 className="text-2xl font-semibold text-gray-800">{name}</h2>
+              <p className="text-gray-600">{email}</p>
+              <p className="text-gray-600">{address}</p>
+              <p className="text-gray-600">{phone}</p>
             </div>
           </div>
           <button
