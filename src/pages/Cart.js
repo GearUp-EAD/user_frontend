@@ -1,14 +1,19 @@
+/*global payhere*/
+
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { FaPen } from "react-icons/fa";
 import CartItem from "../components/CartItem";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+
+const customerId = "05f3b827-f780-47be-a7d6-49eb900e1dad";
 
 const CartPage = () => {
   const location = useLocation();
 
   // Retrieve product data passed from the product page
-  const { product, selectedSize } = location.state || {};
+  const { product, selectedSize, sizeId } = location.state || {}; // Include sizeId
 
   // Initialize cart items from sessionStorage or as an empty array
   const [cartItems, setCartItems] = useState(() => {
@@ -16,29 +21,44 @@ const CartPage = () => {
     return savedCart ? JSON.parse(savedCart) : [];
   });
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [userProfile, setUserProfile] = useState({
+    name: "John Doe",
+    address: "1234 Elm Street, Springfield, USA",
+    phone: "+1 234 567 890",
+  });
+
   // Add a new product to the cart only when the component mounts or the product changes
   useEffect(() => {
-    if (product) {
+    if (product && selectedSize && sizeId) {
       const newItem = {
-        id: `${product.id}-${selectedSize}`, // Unique identifier combining ID and size
-        originalId: product.id,
+        id: `${product.productId}-${sizeId}`,
+        originalId: product.productId,
         image: product.imageUrl || "https://via.placeholder.com/150",
         name: product.name,
         description: `${product.description}, Size: ${selectedSize}`,
-        price: product.basePrice,
+        price:
+          product.basePrice +
+          product.variants.find((variant) => variant.variantId === sizeId)
+            ?.priceAdjustment || 0,
         quantity: 0,
+        sizeId: sizeId,
+        size: selectedSize,
         checked: false,
       };
 
       setCartItems((prevCartItems) => {
-        const existingItem = prevCartItems.find((item) => item.id === newItem.id);
+        const existingItem = prevCartItems.find(
+          (item) => item.id === newItem.id
+        );
         if (existingItem) {
-          // Increment the quantity if the item already exists
           return prevCartItems.map((item) =>
-            item.id === newItem.id ? { ...item, quantity: item.quantity + 1 } : item
+            item.id === newItem.id
+              ? { ...item, quantity: item.quantity + 1 }
+              : item
           );
         } else {
-          // Add the new item if it doesn't exist
           return [...prevCartItems, newItem];
         }
       });
@@ -46,7 +66,7 @@ const CartPage = () => {
       // Clear location state after adding to cart
       window.history.replaceState({}, document.title);
     }
-  }, [product, selectedSize]);
+  }, [product, selectedSize, sizeId]);
 
   // Persist cart items to sessionStorage
   useEffect(() => {
@@ -92,6 +112,138 @@ const CartPage = () => {
     setCartItems(updatedCart);
   };
 
+  const handleProfileChange = (field, value) => {
+    setUserProfile((prevProfile) => ({
+      ...prevProfile,
+      [field]: value,
+    }));
+  };
+
+
+  const handleConfirmOrder = async () => {
+    console.log("Confirm Order clicked!"); // Debugging log
+  
+    const orderData = 
+      {
+        customerId,
+        items: checkedItems.map((item) => ({
+          productVariantId: item.sizeId, // Use sizeId as productVariantId
+          quantity: item.quantity,
+        })),
+      };
+    
+  
+    console.log("Order Data: ", JSON.stringify(orderData, null, 2)); // Log the order data for debugging
+  
+    try {
+      const response = await fetch("http://localhost:8080/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+      const responseData = await response.json();
+
+  console.log("sfhsdfad",responseData);
+      if (response.ok) {
+        console.log("Order placed successfully!");
+        console.log("oder data",response)
+  
+        // Remove only the checked items from the cart
+        const remainingItems = cartItems.filter((item) => !item.checked);
+  
+        // Update the cart state with remaining items
+        setCartItems(remainingItems);
+  
+        // Persist the updated cart to session storage
+        sessionStorage.setItem("cartItems", JSON.stringify(remainingItems));
+        
+        setIsModalVisible(false); 
+        console.log("hkashjfaskfaksg",response);// Close the modal
+        return responseData;
+
+      } else {
+        console.error("Failed to place the order:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error while placing the order:", error);
+    }
+  };
+  
+  // Function to handle payment
+  const handlePayment = async (Order_Id) => {
+    try {
+      // Fetch order details
+      const orderResponse = await fetch(`http://localhost:8080/api/orders/${Order_Id}`);
+      if (!orderResponse.ok) throw new Error("Failed to fetch order details");
+  
+      const { totalAmount, orderID } = await orderResponse.json();
+      const amount = `${totalAmount}.00`;
+      const order_id = orderID;
+  
+      // Payment details
+      const paymentDetails = {
+        order_id,
+        amount,
+        currency: "LKR",
+        first_name: "Saman",
+        last_name: "Perera",
+        email: "samanp@gmail.com",
+        phone: "0771234567",
+        address: "No.1, Galle Road",
+        city: "Colombo",
+        country: "Sri Lanka",
+      };
+  
+      // Request hash and merchant ID from backend
+      const hashResponse = await fetch(
+        "https://evident-chipmunk-assured.ngrok-free.app/api/payments/start",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(paymentDetails),
+        }
+      );
+      if (!hashResponse.ok) throw new Error("Failed to generate hash for payment");
+  
+      const response = await hashResponse.json();
+      const { hash, merchantId } = response;
+      console.log("Hash:", hash);
+      console.log("Merchant ID:", merchantId);
+  
+      // Payment configuration
+      const paymentConfig = {
+        sandbox: true,
+        merchant_id: merchantId,
+        return_url: "http://localhost:3000/",
+        cancel_url: "http://localhost:3000/payment/cancel",
+        notify_url: "https://evident-chipmunk-assured.ngrok-free.app/api/payments/notify",
+        ...paymentDetails,
+        items: "Item Title",
+        hash,
+      };
+  
+      console.log("Payment config:", paymentConfig);
+      payhere.startPayment(paymentConfig);
+    } catch (error) {
+      console.error("An error occurred:", error.message);
+    }
+  };
+  
+  // Function to handle "Pay Now" button click
+  const handlePayNow = async () => {
+    try {
+      console.log("Placing order...");
+      const Order_Id = await handleConfirmOrder(); // Call order confirmation
+      console.log(Order_Id)
+      console.log("Initiating payment...");
+      await handlePayment(Order_Id); // Call payment processing
+    } catch (error) {
+      console.error("Error occurred during Pay Now process:", error.message);
+    }
+  };
+  
   return (
     <div className="bg-gray-50 min-h-screen">
       <Header />
@@ -143,6 +295,7 @@ const CartPage = () => {
               <span>${total.toFixed(2)}</span>
             </div>
             <button
+              onClick={() => setIsModalVisible(true)}
               className="w-full bg-brown-500 text-white py-3 rounded-lg mt-4 hover:bg-brown-600"
               disabled={checkedItems.length === 0}
             >
@@ -151,6 +304,81 @@ const CartPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal Popup */}
+      {isModalVisible && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-[500px] relative">
+            <button
+              onClick={() => setIsModalVisible(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
+            >
+              ✖
+            </button>
+            <h2 className="text-2xl font-bold mb-6">Shipping Address</h2>
+
+            {/* <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
+              <input
+                type="text"
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={userProfile.name}
+                readOnly
+              />
+            </div> */}
+
+            <div className="mb-4 relative">
+              <label className="block text-sm font-medium text-gray-700">
+                Confirm Your Address
+              </label>
+              <input
+                type="text"
+                className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={userProfile.address}
+                readOnly
+              />
+              <FaPen
+                className="absolute top-2 right-2 text-gray-400 cursor-pointer"
+                onClick={() =>
+                  handleProfileChange(
+                    "address",
+                    prompt("Enter new address:", userProfile.address)
+                  )
+                }
+              />
+            </div>
+
+            {/* <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700">
+                Phone
+              </label>
+              <input
+                type="text"
+                className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={userProfile.phone}
+                readOnly
+              />
+            </div> */}
+
+            <div className="mt-4 flex justify-between items-center">
+              {/* <button
+                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                onClick={() => setIsModalVisible(false)}
+              >
+                Cancel
+              </button> */}
+              <button
+                className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                onClick={handlePayNow}
+              >
+                Pay Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <Footer />
     </div>
   );

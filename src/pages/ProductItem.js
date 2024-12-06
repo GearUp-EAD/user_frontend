@@ -8,13 +8,11 @@ const ProductItem = () => {
   const { productId } = useParams(); // Make sure this is correctly extracted
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
+  const [sizeId, setSizeId] = useState(null); // Variable to store size ID
   const [isAddedToCart, setIsAddedToCart] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
- 
-
-  // Ensure productId is available before fetching product
   useEffect(() => {
     if (!productId) {
       setError("Product ID is missing.");
@@ -41,7 +39,14 @@ const ProductItem = () => {
   }, [productId]);
 
   const handleSizeChange = (e) => {
-    setSelectedSize(e.target.value);
+    const selectedSizeValue = e.target.value;
+    setSelectedSize(selectedSizeValue);
+
+    // Find the variantId based on the selected size
+    const selectedVariant = product?.variants.find(
+      (variant) => variant.size === selectedSizeValue
+    );
+    setSizeId(selectedVariant?.variantId || null);
   };
 
   if (loading) {
@@ -56,13 +61,11 @@ const ProductItem = () => {
     return <div>Product not found.</div>;
   }
 
-  // Check if images are available and assign them
   const product_img = {
     images: product.imageUrl ? [{ id: 1, url: product.imageUrl }] : [],
   };
 
-
-  const size = product.variants
+  const size = product.variants;
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -71,7 +74,6 @@ const ProductItem = () => {
       </div>
       <div className="max-w-4xl mx-auto p-6 border rounded-lg shadow-lg flex gap-8 bg-white mb-14">
         <div className="flex-1">
-          {/* Ensure images exist before trying to render */}
           {product_img.images.length > 0 && (
             <img
               src={product_img.images[0].url}
@@ -116,18 +118,17 @@ const ProductItem = () => {
               ))}
             </select>
           </div>
-
           <button
             onClick={() => {
               if (!selectedSize) {
                 alert("Please select a size before adding to the cart.");
                 return;
               }
-
               navigate("../cart", {
                 state: {
                   product,
                   selectedSize,
+                  sizeId, // Include size ID in the cart state
                 },
               });
             }}
