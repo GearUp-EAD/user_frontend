@@ -95,7 +95,7 @@ const Register = () => {
                   <MdOutlineAlternateEmail className="h-4 w-4 text-gray-400" />
                 </span>
               </div>
-              {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
+              {errors.email && <p  className="text-red-500 text-xs">{errors.email}</p>}
             </div>
             {/* Password Field */}
             <div>

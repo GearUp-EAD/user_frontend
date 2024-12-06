@@ -6,6 +6,7 @@ const ItemCard = ({ imageUrl, title, description, price }) => {
 
   return (
     <div
+      data-cy="item-card"
       className="bg-white border border-gray-200 rounded-lg shadow-lg"
       style={{ width: "327px", height: "327px" }}
       onClick={() => navigate("../product-item")}
