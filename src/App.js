@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
+import ProtectedRoutes from "./context/ProtectedRoutes"
 
 import Navbar from "./components/Navbar/Navbar";
 
@@ -43,13 +44,18 @@ const App = () => {
             <Route path="/product-item/:productId" element={<ProductItem />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route element={<ProtectedRoutes />}>
+            
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile-edit" element={<EditProfile />} />
+            </Route>            
+            {/* <Route path="/equipments" element={<Equipments />} /> */}
             <Route path="/equipments" element={<Equipments />} />
             <Route path="/accessories" element={<Accessories />} />
             <Route path="/apparels" element={<Apparels />} />
             <Route path="/footWear" element={<FootWear />} />
             <Route path="/nutritionHealth" element={<NutritionHealth />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile-edit" element={<EditProfile />} />
+           
           </Routes>
         </main>
 
