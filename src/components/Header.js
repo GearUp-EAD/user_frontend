@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FiSearch, FiBell, FiShoppingCart, FiMenu } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../assets/images/ead_Logo.png";
+import { login, logout } from "../context/ProtectedRoutes";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,8 +34,13 @@ const Header = () => {
         <div>
           <button 
             className="mt-6 px-6 py-2 bg-brown-500 text-white font-semibold rounded hover:bg-brown-600"
-            onClick={() => navigate("../login")}>
+            onClick={login}>
             Login
+          </button>
+          <button 
+            className="mt-6 px-6 py-2 bg-brown-500 text-white font-semibold rounded hover:bg-brown-600"
+            onClick={logout}>
+            Logout
           </button>
         </div>
         <div className="flex items-center space-x-4">
