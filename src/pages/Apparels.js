@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ItemCard from "../components/ItemCard";
 import CoverCard from "../components/CoverCard";
 import Footer from "../components/Footer";
@@ -9,96 +10,40 @@ import image3 from "../assets/images/Apparels/Shorts.jpg";
 import image4 from "../assets/images/Apparels/Swimwear.jpg";
 import image5 from "../assets/images/Apparels/T-shirts & Jerseys.jpg";
 
+const categories = [
+  { id: "0a18d3f7-7f18-4d61-bff0-4fecb75475a8", name: "Compression Wear", imageUrl: image1 },
+  { id: "6e55c2ff-cd44-44a1-b57d-92bc91b64f69", name: "Jackets & Hoodies", imageUrl: image2 },
+  { id: "1a297e80-9ec4-448c-a51a-fc06f2daf202", name: "Shorts", imageUrl: image3 },
+  { id: "61c57393-b969-4e1c-b4a1-7354c5edcf9a", name: "Swimwear", imageUrl: image4 },
+  { id: "59f4e609-383b-4c43-b691-9676e3f0ac2b", name: "T-shirts & Jerseys", imageUrl: image5 },
+];
+
 const Apparels = () => {
-  const categories = [
-    {
-      id: "cat1",
-      name: "Compression Wear",
-      imageUrl: image1,
-    },
-    {
-      id: "cat2",
-      name: "Jackets & Hoodies",
-      imageUrl: image2,
-    },
-    {
-      id: "cat3",
-      name: "Shorts",
-      imageUrl: image3,
-    },
-    {
-      id: "cat4",
-      name: "Swimwear",
-      imageUrl: image4,
-    },
-    {
-      id: "cat5",
-      name: "T-shirts & Jerseys",
-      imageUrl: image5,
-    },
-  ];
+  const navigate = useNavigate();
+  const [items, setItems] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(categories[0].id);
 
-  const items = [
-    {
-      id: 1,
-      title: "Item 1",
-      description: "Description 1",
-      price: 100,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat1",
-    },
-    {
-      id: 2,
-      title: "Item 2",
-      description: "Description 2",
-      price: 200,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat2",
-    },
-    {
-      id: 3,
-      title: "Item 3",
-      description: "Description 3",
-      price: 300,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat3",
-    },
-    {
-      id: 4,
-      title: "Item 4",
-      description: "Description 4",
-      price: 400,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat4",
-    },
-    {
-      id: 5,
-      title: "Item 5",
-      description: "Description 5",
-      price: 500,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat5",
-    },
-    {
-      id: 6,
-      title: "Item 6",
-      description: "Description 6",
-      price: 600,
-      imageUrl: "https://via.placeholder.com/150",
-      categoryId: "cat1",
-    },
-    // Add more items as needed
-  ];
+  useEffect(() => {
+    fetchItems(categories[0].id); // Load default category on mount
+  }, []);
 
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
-  const handleCategoryClick = (categoryId) => {
-    setSelectedCategory(categoryId);
+  const fetchItems = async (categoryId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/products?categoryId=${categoryId}`);
+      if (!response.ok) {
+        throw new Error("Failed to fetch items");
+      }
+      const data = await response.json();
+      setItems(data);
+    } catch (error) {
+      console.error("Error fetching items:", error);
+    }
   };
 
-  const filteredItems = selectedCategory
-    ? items.filter((item) => item.categoryId === selectedCategory)
-    : items;
+  const handleCategoryClick = (categoryId) => {
+    setActiveCategory(categoryId);
+    fetchItems(categoryId); // Fetch items on category click
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -109,36 +54,40 @@ const Apparels = () => {
         {/* Category Display */}
         <div className="flex justify-center gap-4 mb-6">
           {categories.map((category) => (
-            <div
+            <CoverCard
               key={category.id}
+              imageUrl={category.imageUrl}
+              name={category.name}
+              isActive={activeCategory === category.id}
               onClick={() => handleCategoryClick(category.id)}
-              className="cursor-pointer"
-            >
-              <CoverCard imageUrl={category.imageUrl} name={category.name} />
-            </div>
-          ))}
-        </div>
-
-        <div className="text-2xl font-bold text-gray-800 mt-6 mx-10">
-          Available Items
-        </div>
-
-        {/* Items Display */}
-        <div className="flex overflow-x-auto space-x-4 py-4 mx-10">
-          {filteredItems.map((item) => (
-            <ItemCard
-              key={item.id}
-              imageUrl={item.imageUrl}
-              title={item.title}
-              description={item.description}
-              price={item.price}
             />
           ))}
         </div>
+
+        <div className="flex items-center justify-center mt-20 mb-10">
+          <div className="flex-grow border-t border-brown-500"></div>
+          <div className="text-3xl font-bold text-gray-800 mx-4">Available Items</div>
+          <div className="flex-grow border-t border-brown-500"></div>
+        </div>
+
+        {/* Items Display */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6 px-4">
+          {items.map((item) => (
+            <div 
+              key={item.id} 
+              onClick={() => navigate(`/product-item/${item.productId}`)}
+            >
+              <ItemCard
+                imageUrl={item.imageUrl}
+                title={item.name}
+                description={item.description}
+                price={item.basePrice}
+              />
+            </div>
+          ))}
+        </div>
       </div>
-      <div>
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };

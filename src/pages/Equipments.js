@@ -14,6 +14,8 @@ const Equipment = () => {
 
   const navigate = useNavigate();
 
+  const parentCategoriesId = "fc9ed66e-37d4-4e2f-a674-7fc4e1fab4b9";
+
   const categories = [
     { id: "a6bec2cf-511a-4fb0-a588-db251d6e68f3", name: "Balls", imageUrl: image1 },
     { id: "044b3f97-23f4-497d-b325-b7dbc20fa08c", name: "Bags and Bottles", imageUrl: image2 },
@@ -29,7 +31,7 @@ const Equipment = () => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await fetch("http://localhost:8080/api/products");
+        const response = await fetch(`http://localhost:8080/api/products?categoryId=${parentCategoriesId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch items");
         }
@@ -72,9 +74,12 @@ const Equipment = () => {
           ))}
         </div>
 
-        <div className="text-2xl font-bold text-gray-800 mt-6 text-center">
-          Available Items
+        <div className="flex items-center justify-center mt-20 mb-10">
+          <div className="flex-grow border-t border-brown-500"></div>
+          <div className="text-3xl font-bold text-gray-800 mx-4">Available Items</div>
+          <div className="flex-grow border-t border-brown-500"></div>
         </div>
+
 
         {/* Items Display */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6 px-4">

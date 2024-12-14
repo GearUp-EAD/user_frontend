@@ -33,9 +33,9 @@ const CartItem = ({
       <div className="flex-1">
         <h3 className="text-lg font-semibold">{name}</h3>
         <p className="text-sm text-gray-600">{description}</p>
-        <p className="text-sm text-gray-600 mt-2">Price: ${price.toFixed(2)}</p>
+        <p className="text-sm text-gray-600 mt-2">Price: Rs {price.toFixed(2)}</p>
         <p className="text-sm text-gray-600">
-          Total: ${(price * quantity).toFixed(2)}
+          Total: Rs {(price * quantity).toFixed(2)}
         </p>
       </div>
 

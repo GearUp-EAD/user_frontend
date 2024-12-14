@@ -97,7 +97,7 @@ const ProductItem = () => {
           <h2 className="text-2xl font-bold">{product.name}</h2>
           <p className="text-gray-500">{product.description}</p>
           <h3 className="text-xl font-semibold mt-2">
-            ${product.basePrice.toFixed(2)}
+            Rs {product.basePrice.toFixed(2)}
           </h3>
 
           <div className="mt-4">

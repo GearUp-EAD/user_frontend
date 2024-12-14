@@ -5,68 +5,56 @@ import { useNavigate } from "react-router-dom";
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("orders");
   const [orders, setOrders] = useState([]);
-  const [wishlist, setWishlist] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [orderItems, setOrderItems] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const navigate = useNavigate();
+
   const [name, setName] = useState("John Doe");
   const [email, setEmail] = useState("john.doe@example.com");
   const [address, setAddress] = useState("123 Main Street, Springfield");
   const [phone, setPhone] = useState("+1 234 567 890");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const dummyOrders = [
-    {
-      id: "001",
-      date: "2024-11-20T14:35:00Z",
-      status: "Delivered",
-      items: [
-        { name: "Wireless Mouse", quantity: 1, price: 25.99 },
-        { name: "Keyboard", quantity: 1, price: 49.99 },
-      ],
-      totalAmount: 75.98,
-    },
-    {
-      id: "002",
-      date: "2024-11-22T09:10:00Z",
-      status: "Shipped",
-      items: [
-        { name: "Bluetooth Headphones", quantity: 1, price: 89.99 },
-      ],
-      totalAmount: 89.99,
-    },
-    {
-      id: "003",
-      date: "2024-12-01T18:30:00Z",
-      status: "Processing",
-      items: [
-        { name: "Laptop Stand", quantity: 1, price: 35.99 },
-        { name: "USB Cable", quantity: 2, price: 5.99 },
-      ],
-      totalAmount: 47.97,
-    },
-    {
-      id: "004",
-      date: "2024-12-02T10:45:00Z",
-      status: "Delivered",
-      items: [
-        { name: "Smartphone Case", quantity: 2, price: 19.99 },
-      ],
-      totalAmount: 39.98,
-    },
-  ];
-
-  const fetchOrders = () => {
-    // Simulating API call with dummy data
-    setOrders(dummyOrders);
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/orders/customer/f838e2bf-ee6e-4d51-afc2-c0f928d6698b"
+      );
+      console.log(response);
+      setOrders(response.data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const fetchWishlist = () => {
-    // Simulating API call with dummy data (empty for now)
-    setWishlist([]);
+  const fetchOrderItems = async (orderId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/orderItems/${orderId}`
+      );
+      setOrderItems(response.data); // Assuming the API returns an array of order items
+    } catch (error) {
+      console.error("Error fetching order items:", error);
+    }
+  };
+
+  const openPopup = (orderId) => {
+    setSelectedOrder(orderId);
+    fetchOrderItems(orderId);
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
+    setOrderItems([]);
   };
 
   useEffect(() => {
     if (activeTab === "orders") fetchOrders();
-    if (activeTab === "wishlist") fetchWishlist();
   }, [activeTab]);
 
   const navigateEdit = () => {
@@ -99,28 +87,16 @@ const Profile = () => {
         </div>
 
         <div className="mt-6 border-b border-gray-200">
-          <div className="flex space-x-6">
-            <button
-              onClick={() => setActiveTab("orders")}
-              className={`py-2 px-4 text-sm font-medium ${
-                activeTab === "orders"
-                  ? "text-[#74512D] border-b-2 border-[#74512D]"
-                  : "text-gray-600"
-              }`}
-            >
-              Order History
-            </button>
-            <button
-              onClick={() => setActiveTab("wishlist")}
-              className={`py-2 px-4 text-sm font-medium ${
-                activeTab === "wishlist"
-                  ? "text-[#74512D] border-b-2 border-[#74512D]"
-                  : "text-gray-600"
-              }`}
-            >
-              Wishlist
-            </button>
-          </div>
+          <button
+            onClick={() => setActiveTab("orders")}
+            className={`py-2 px-4 text-sm font-medium ${
+              activeTab === "orders"
+                ? "text-[#74512D] border-b-2 border-[#74512D]"
+                : "text-gray-600"
+            }`}
+          >
+            Order History
+          </button>
         </div>
 
         <div className="mt-6">
@@ -128,29 +104,26 @@ const Profile = () => {
 
           {activeTab === "orders" && !loading && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-800">
-                Order History
-              </h3>
               {orders.length > 0 ? (
                 <ul className="mt-4 space-y-4">
                   {orders.map((order) => (
                     <li
-                      key={order.id}
+                      key={order.orderID}
                       className="p-4 bg-gray-50 rounded-lg shadow flex justify-between"
                     >
                       <div>
-                        <h4 className="font-semibold">Order #{order.id}</h4>
+                        <h4 className="font-semibold">Order #{order.orderID}</h4>
                         <p className="text-sm text-gray-600">
-                          Placed on: {new Date(order.date).toLocaleDateString()}
+                          Placed on: {new Date(order.orderDate).toLocaleDateString()}
                         </p>
-                        <p className="text-sm text-gray-600">
-                          Status: {order.status}
-                        </p>
+                        <p className="text-sm text-gray-600">Status: {order.status}</p>
+                        <p className="text-sm text-gray-600">Total Amount: {order.totalAmount}</p>
                       </div>
-                      <button className="px-4 py-2 text-black text-12px">
-                        {order.status === "Delivered"
-                          ? "View Details→"
-                          : "Track Order"}
+                      <button
+                        onClick={() => openPopup(order.orderID)}
+                        className="px-4 py-2 text-black text-12px"
+                      >
+                        View Details
                       </button>
                     </li>
                   ))}
@@ -160,37 +133,31 @@ const Profile = () => {
               )}
             </div>
           )}
-
-          {activeTab === "wishlist" && !loading && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">Wishlist</h3>
-              {wishlist.length > 0 ? (
-                <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {wishlist.map((item) => (
-                    <li
-                      key={item.id}
-                      className="bg-gray-50 rounded-lg shadow p-4"
-                    >
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-40 object-cover rounded-lg"
-                      />
-                      <h4 className="mt-2 font-semibold">{item.name}</h4>
-                      <p className="text-sm text-gray-600">${item.price}</p>
-                      <button className="mt-2 px-4 py-1 bg-[#74512D] text-white rounded-md">
-                        Add to Cart
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-gray-600 mt-4">Your wishlist is empty.</p>
-              )}
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Popup for order items */}
+      {isPopupOpen && (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-xl font-semibold mb-4">Order #{selectedOrder} Details</h3>
+            <ul className="space-y-2">
+              {orderItems.map((item) => (
+                <li key={item.orderItemID} className="flex justify-between">
+                  <span className="font-medium">Product Variant ID:</span>
+                  <span>{item.productVariantId}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={closePopup}
+              className="mt-4 px-4 py-2 bg-[#74512D] text-white rounded-md"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

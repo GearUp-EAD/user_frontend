@@ -7,7 +7,7 @@ import CartItem from "../components/CartItem";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-const customerId = "05f3b827-f780-47be-a7d6-49eb900e1dad";
+const customerId = "f838e2bf-ee6e-4d51-afc2-c0f928d6698b";
 
 const CartPage = () => {
   const location = useLocation();
@@ -42,7 +42,7 @@ const CartPage = () => {
           product.basePrice +
           product.variants.find((variant) => variant.variantId === sizeId)
             ?.priceAdjustment || 0,
-        quantity: 0,
+        quantity: 1,
         sizeId: sizeId,
         size: selectedSize,
         checked: false,
@@ -123,15 +123,13 @@ const CartPage = () => {
   const handleConfirmOrder = async () => {
     console.log("Confirm Order clicked!"); // Debugging log
   
-    const orderData = 
-      {
-        customerId,
-        items: checkedItems.map((item) => ({
-          productVariantId: item.sizeId, // Use sizeId as productVariantId
-          quantity: item.quantity,
-        })),
-      };
-    
+    const orderData = {
+      customerId,
+      items: checkedItems.map((item) => ({
+        productVariantId: item.sizeId, // Use sizeId as productVariantId
+        quantity: item.quantity,
+      })),
+    };
   
     console.log("Order Data: ", JSON.stringify(orderData, null, 2)); // Log the order data for debugging
   
@@ -144,11 +142,31 @@ const CartPage = () => {
         body: JSON.stringify(orderData),
       });
       const responseData = await response.json();
-
-  console.log("sfhsdfad",responseData);
+      console.log(responseData)
+  
       if (response.ok) {
         console.log("Order placed successfully!");
-        console.log("oder data",response)
+  
+        // After placing the order, send the shipping address along with the Order_Id
+        const shippingData = {
+          shippingAddress: userProfile.address, // Sending the shipping address
+          order: responseData, // Sending the orderId returned from the order API
+        };
+  
+        // Send shipping address with Order_Id to the backend
+        const shippingResponse = await fetch("http://localhost:8080/api/shippings", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(shippingData),
+        });
+  
+        if (shippingResponse.ok) {
+          console.log("Shipping address updated successfully!");
+        } else {
+          console.error("Failed to update shipping address:", shippingResponse.statusText);
+        }
   
         // Remove only the checked items from the cart
         const remainingItems = cartItems.filter((item) => !item.checked);
@@ -158,11 +176,9 @@ const CartPage = () => {
   
         // Persist the updated cart to session storage
         sessionStorage.setItem("cartItems", JSON.stringify(remainingItems));
-        
-        setIsModalVisible(false); 
-        console.log("hkashjfaskfaksg",response);// Close the modal
-        return responseData;
-
+  
+        setIsModalVisible(false); // Close the modal
+        return responseData; // Return the order ID
       } else {
         console.error("Failed to place the order:", response.statusText);
       }
@@ -278,21 +294,21 @@ const CartPage = () => {
             <h2 className="text-lg font-bold mb-4">SUMMARY</h2>
             <div className="flex justify-between mb-2">
               <span className="text-gray-600">Subtotal</span>
-              <span className="font-semibold">${subtotal.toFixed(2)}</span>
+              <span className="font-semibold">Rs.{subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between mb-2">
               <span className="text-gray-600">Shipping fee</span>
-              <span className="font-semibold">${shippingFee.toFixed(2)}</span>
+              <span className="font-semibold">Rs.{shippingFee.toFixed(2)}</span>
             </div>
             <div className="flex justify-between mb-2">
               <span className="text-gray-600">Saved</span>
               <span className="font-semibold text-red-500">
-                - ${savedAmount.toFixed(2)}
+                - Rs.{savedAmount.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between font-bold text-lg border-t border-gray-300 pt-2">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>Rs.{total.toFixed(2)}</span>
             </div>
             <button
               onClick={() => setIsModalVisible(true)}
@@ -337,18 +353,14 @@ const CartPage = () => {
                 type="text"
                 className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={userProfile.address}
-                readOnly
+                onChange={(e) => handleProfileChange("address", e.target.value)} // Allowing address edit
               />
               <FaPen
                 className="absolute top-2 right-2 text-gray-400 cursor-pointer"
-                onClick={() =>
-                  handleProfileChange(
-                    "address",
-                    prompt("Enter new address:", userProfile.address)
-                  )
-                }
+                onClick={() => {}} // No longer needed for address change, as it's directly editable
               />
             </div>
+
 
             {/* <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700">

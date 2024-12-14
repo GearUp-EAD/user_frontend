@@ -11,12 +11,12 @@ const keycloak = new Keycloak({
 // Logout function
 export const logout = async () => {
   try {
-    const redirectUri = `${window.location.origin}/`; // Redirect to login or any page after logout
+    if (!keycloak.authenticated) {
+      await keycloak.init({ onLoad: 'check-sso' });
+    }
 
-    await keycloak.logout({
-      redirectUri, // Pass the post-logout redirect URI
-    });
-
+    await keycloak.logout();
+    
     // Clear any application state/storage if needed
     localStorage.removeItem('user-settings'); // Example
   } catch (error) {
@@ -24,7 +24,6 @@ export const logout = async () => {
     // Handle logout failure - show user feedback
   }
 };
-
 
 // Login function
 export const login = async () => {
@@ -38,8 +37,6 @@ export const login = async () => {
     // If authentication successful
     if (keycloak.authenticated) {
       console.log('User authenticated');
-      // setIsAuthenticated(true);
-      
       // Store tokens if needed
       localStorage.setItem('access-token', keycloak.token);
       localStorage.setItem('refresh-token', keycloak.refreshToken);
@@ -60,24 +57,26 @@ export const getIdToken = () => {
   try {
     if (!keycloak.authenticated) {
       console.warn('User not authenticated');
-      // return undefined;
       return "not authenticated";
     }
-    console.log("in the id token retrive funtion")
+    console.log("in the id token retrieve function");
     console.log(keycloak.idToken);
-    // return keycloak.idToken;
-    return"authenticated";
+    return "authenticated";
   } catch (error) {
     console.error('Error getting ID token:', error);
     return undefined;
   }
 };
+
 const ProtectedRoutes = () => {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    keycloak.init({ onLoad: 'login-required' }).then((authenticated) => {
+    keycloak.init({
+      onLoad: 'login-required',
+      redirectUri: window.location.href // Redirect to the current page
+    }).then((authenticated) => {
       setIsAuthenticated(authenticated);
       setLoading(false);
     });
@@ -87,7 +86,7 @@ const ProtectedRoutes = () => {
     return <div>Loading...</div>;
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/public" />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
 };
 
 export { ProtectedRoutes as default, keycloak };

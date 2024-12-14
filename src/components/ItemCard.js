@@ -16,7 +16,7 @@ const ItemCard = ({ imageUrl, title, description, price }) => {
       <div className="py-4 flex flex-col items-center -mb-6" >
         <h5 className="text-gray-700 text-sm">{title}</h5>
         <p className="text-gray-700 text-sm">{description}</p>
-        <p className="text-gray-700 text-sm">Price: ${price}</p>
+        <p className="text-gray-700 text-sm">Price: Rs.{price}</p>
       </div>
     </div>
   );
