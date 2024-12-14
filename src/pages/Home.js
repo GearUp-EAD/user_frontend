@@ -15,7 +15,7 @@ import Header from "../components/Header";
 import ItemCard from "../components/ItemCard";
 import CoverCard from "../components/CoverCard";
 
-const Home = () => {
+const   Home = () => {
   const navigate = useNavigate();
 
   const image = "https://via.placeholder.com/150";

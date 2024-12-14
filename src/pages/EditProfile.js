@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import keycloak from "keycloak-js"; // Assuming keycloak-js is already initialized
 
 const EditProfile = () => {
   const [profileImage, setProfileImage] = useState("");
@@ -6,26 +7,35 @@ const EditProfile = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(""); // Address field
   const [loading, setLoading] = useState(true);
 
   const defaultProfileIcon =
-    "https://via.placeholder.com/150?text=Profile+Icon"; 
+    "https://via.placeholder.com/150?text=Profile+Icon"; // Default profile icon
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch("/api/user/profile", {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        const data = await response.json();
+        // Check if the user is authenticated
+        if (!keycloak.authenticated) {
+          console.error("User is not authenticated");
+          setLoading(false);
+          return;
+        }
 
-        setProfileImage(data.profileImage || "defaultProfileIcon");
-        setName(data.name || "");
-        setEmail(data.email || "");
-        setPassword(data.password ? "*".repeat(data.password.length) : "");
-        setAddress(data.address || "");
+        // Retrieve user details from Keycloak token
+        const userInfo = keycloak.tokenParsed;
+        console.log(userInfo); // Log to inspect the structure
+
+        // Set user details into state
+        setProfileImage(defaultProfileIcon); // Keycloak doesn't provide an image URL by default
+        setName(userInfo?.preferred_username || userInfo?.name || ""); // Use Keycloak username or name
+        setEmail(userInfo?.email || ""); // Email from Keycloak
+
+        // Handle custom claims for address if available
+        const userAddress = userInfo?.address || ""; // Check if 'address' exists in Keycloak token
+        setAddress(userAddress); // Default empty if not present in Keycloak
+
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
@@ -34,22 +44,23 @@ const EditProfile = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, []); // Empty array ensures the effect only runs once on mount
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setProfileImage(reader.result);
+        setProfileImage(reader.result); // Update profile image state with selected file
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // Convert the image to base64 string
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Example: Update to backend if needed
       const response = await fetch("/api/user/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -57,7 +68,7 @@ const EditProfile = () => {
           profileImage,
           name,
           email,
-          password: password.includes("*") ? undefined : password,
+          password: password.includes("*") ? undefined : password, // Conditionally send password
           newPassword,
           address,
         }),
@@ -179,8 +190,9 @@ const EditProfile = () => {
               htmlFor="address"
               className="block text-sm font-medium text-gray-700"
             >
-              Shipment Address
+              Shipping Address
             </label>
+            <p className="text-gray-600">{address}</p>
             <textarea
               id="address"
               value={address}

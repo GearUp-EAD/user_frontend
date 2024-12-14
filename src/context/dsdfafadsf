@@ -1,0 +1,29 @@
+// // keycloakConfig.js
+// import Keycloak from "keycloak-js";
+
+// let keycloakInstance;
+
+// export const getKeycloakInstance = () => {
+//   if (!keycloakInstance) {
+//     keycloakInstance = new Keycloak({
+//       url: "http://localhost:8081",
+//       realm: "Elite-Gear",
+//       clientId: "Elite-Gear",
+//     });
+//   }
+//   return keycloakInstance;
+// };
+
+// let isInitialized = false;
+
+// export const initKeycloak = async () => {
+//   const keycloak = getKeycloakInstance();
+//   if (!isInitialized) {
+//     await keycloak.init({
+//       onLoad: "check-sso",
+//       checkLoginIframe: false,
+//     });
+//     isInitialized = true;
+//   }
+//   return keycloak;
+// };

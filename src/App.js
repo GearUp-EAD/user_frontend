@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import ContactUs from "./pages/ContactUs";
 import ProtectedRoutes from "./context/ProtectedRoutes"
 
+
 import Navbar from "./components/Navbar/Navbar";
 
 import CartPage from "./pages/Cart";
@@ -18,20 +19,19 @@ import FootWear from "./pages/Footwear";
 import NutritionHealth from "./pages/NutritionHealth";
 import Profile from "./pages/Profile";
 import EditProfile from "./pages/EditProfile";
+import CheckUser from "./pages/Checkuser"
 
 const App = () => {
   const [isVisible, setIsVisible] = useState(false); // State for visibility toggle
 
   return (
-    <Router>
-      {/* Overall Layout */}
-      <div className="flex flex-col min-h-screen">
-        {/* Header */}
 
-        {/* Main Content */}
+    <Router>
+      <div className="flex flex-col min-h-screen">
+
         <main className="flex-grow">
+          
           <Routes>
-            {/* Pass props to Home */}
             <Route
               path="/"
               element={
@@ -44,16 +44,20 @@ const App = () => {
             <Route path="/product-item/:productId" element={<ProductItem />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+           
             <Route element={<ProtectedRoutes />}>
-            
+           
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile-edit" element={<EditProfile />} />
+            
             </Route>            
             {/* <Route path="/equipments" element={<Equipments />} /> */}
             <Route path="/equipments" element={<Equipments />} />
             <Route path="/accessories" element={<Accessories />} />
             <Route path="/apparels" element={<Apparels />} />
             <Route path="/footWear" element={<FootWear />} />
+            <Route path="/CheckUser" element ={<CheckUser/>}/>
+
             <Route path="/nutritionHealth" element={<NutritionHealth />} />
            
           </Routes>
@@ -62,6 +66,7 @@ const App = () => {
         {/* Footer */}
       </div>
     </Router>
+   
   );
 };
 
